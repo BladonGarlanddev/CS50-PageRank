@@ -58,11 +58,8 @@ def transition_model(corpus, page, damping_factor):
     a link at random chosen from all pages in the corpus.
     """
 
-    print(f"Page of focus for transition model: {page}")
     direct_links = corpus[page]
-    print(f"direct links: {direct_links}")
     other_links = corpus.keys() - direct_links 
-    print(f"other links: {other_links}")
 
     n_outgoing_links = len(corpus[page])
     
@@ -85,7 +82,6 @@ def transition_model(corpus, page, damping_factor):
         
         total = 0
         for page, probability in prob_distro.items():
-            print(f"Page, Probability: ({page, probability})")
             total += probability
 
         print(f"total: {total} \n" )
@@ -127,7 +123,6 @@ def sample_pagerank(corpus, damping_factor, n):
     return pageRanks
     """
 
-    print(f"corpus: {corpus} \n\n\n")
 
     pageRanks = {page: 0 for page in corpus}  # Initialize PageRank dictionary
 
@@ -141,14 +136,10 @@ def sample_pagerank(corpus, damping_factor, n):
         current_page = random.choices(states, state_probabilities, k=1)[0] 
         pageRanks[current_page] += 1
 
-        print(f"Page selected {current_page}")
 
     for page in pageRanks:
-        print(f"Number of occurences for page: {page}, {pageRanks[page]}")
         pageRanks[page] /= n
-        print(f"Probability for page: {page}, {pageRanks[page]}")
 
-    print("\n\n\n\nStarting Iterative Approach")
     return pageRanks
 
 
@@ -157,28 +148,24 @@ def iterate_pagerank(corpus, damping_factor):
     pageRanks = {page: 1 / N for page in corpus}
     convergence_threshold = 0.001
 
-    # Continue the loop until convergence
     while True:
         new_pageRanks = {}
         change = False
         
         for page in corpus:
-            # Calculate sum part of the PageRank formula
             sum_part = 0
             for other_page in corpus:
                 if page in corpus[other_page]:
                     sum_part += pageRanks[other_page] / len(corpus[other_page])
-                elif not corpus[other_page]:  # Handle the case where pages have no outgoing links
+                elif not corpus[other_page]: 
                     sum_part += pageRanks[other_page] / N
 
             new_rank = (1 - damping_factor) / N + damping_factor * sum_part
             new_pageRanks[page] = new_rank
 
-            # Check if the rank change is within the threshold for convergence
             if not change and abs(new_pageRanks[page] - pageRanks[page]) > convergence_threshold:
                 change = True
 
-        # Update ranks if any changes occurred beyond the threshold
         if not change:
             break
         
